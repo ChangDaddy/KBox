@@ -1,5 +1,6 @@
 package com.kitx.box.utils.scoreboardapi;
 
+import com.kitx.box.utils.ColorUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -161,6 +162,7 @@ public class FastBoard {
      * @throws IllegalStateException    if {@link #delete()} was call before
      */
     public void updateTitle(String title) {
+        title = ColorUtil.getHex(title);
         if (this.title.equals(Objects.requireNonNull(title, "title"))) {
             return;
         }
@@ -208,6 +210,7 @@ public class FastBoard {
      * @throws IndexOutOfBoundsException if the line is higher than {@link #size() size() + 1}
      */
     public synchronized void updateLine(int line, String text) {
+        text = ColorUtil.getHex(text);
         checkLineNumber(line, false, true);
 
         try {

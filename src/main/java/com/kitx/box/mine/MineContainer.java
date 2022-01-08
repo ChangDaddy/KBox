@@ -2,6 +2,7 @@ package com.kitx.box.mine;
 
 
 import com.kitx.box.Box;
+import com.kitx.box.utils.CountDown;
 import com.kitx.box.utils.LocationUtil;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -31,7 +32,8 @@ public class MineContainer {
                 final Location pos1 = LocationUtil.parseToLocation(load.getString(mine + ".pos1"));
                 final Location pos2 = LocationUtil.parseToLocation(load.getString(mine + ".pos2"));
                 final Material block = Material.valueOf(load.getString(mine + ".block"));
-                mines.add(new Mine(name, pos1, pos2, block));
+                final int delay = load.getInt(mine + ".delay");
+                mines.add(new Mine(name, pos1, pos2, block, new CountDown(delay)));
             }
         }
         catch(Exception e) {
@@ -50,7 +52,10 @@ public class MineContainer {
                 load.set(mine.getName() + ".pos1", LocationUtil.parseToString(mine.getPos1()));
                 load.set(mine.getName() + ".pos2", LocationUtil.parseToString(mine.getPos2()));
                 load.set(mine.getName() + ".block", mine.getBlock().name());
+                load.set(mine.getName() + ".delay", mine.getReset().getMaxSeconds());
             }
+
+            load.save(file);
         } catch (Exception e) {
             e.printStackTrace();
         }

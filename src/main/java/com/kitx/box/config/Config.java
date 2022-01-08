@@ -21,7 +21,7 @@ public class Config {
         RECEIVED_KIT = config.getString("receiveKit");
         BROADCAST_DELAY = config.getLong("broadcast-delay");
         CHAT_CD = config.getLong("chat-delay");
-        SPAWN_LOCATION = LocationUtil.parseToLocation("spawn");
+        SPAWN_LOCATION = LocationUtil.parseToLocation(config.getString("spawn"));
         for (String key : config.getConfigurationSection("announcements").getKeys(false)) {
             broadcasts++;
         }

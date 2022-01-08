@@ -2,7 +2,7 @@ package com.kitx.box.task.impl;
 
 import com.kitx.box.Box;
 import com.kitx.box.config.Config;
-import com.kitx.box.stats.StatPlayer;
+import com.kitx.box.stats.PlayerData;
 import com.kitx.box.task.Task;
 import com.kitx.box.utils.DefaultFontInfo;
 import net.md_5.bungee.api.ChatColor;
@@ -31,7 +31,7 @@ public class BroadcastTask extends Task {
                 List<String> messages = config.getStringList("announcements.announcement" + counter);
                 for (String message : messages) {
 
-                    for (StatPlayer data : Box.getInstance().getStatContainer().getStatPlayerMap().values()) {
+                    for (PlayerData data : Box.getInstance().getStatContainer().getStatPlayerMap().values()) {
                         if (message.contains("[center]")) {
                             sendCenteredMessage(data.getPlayer(), message.replace("[center]", ""));
                         } else {

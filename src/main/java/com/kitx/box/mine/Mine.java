@@ -1,5 +1,6 @@
 package com.kitx.box.mine;
 
+import com.kitx.box.utils.CountDown;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -14,8 +15,10 @@ public class Mine {
     private final Location pos1;
     private final Location pos2;
     private final Material block;
+    private final CountDown reset;
 
     public void clean() {
+
         final int topBlockX = (Math.max(this.pos1.getBlockX(), this.pos2.getBlockX()));
         final int bottomBlockX = (Math.min(this.pos1.getBlockX(), this.pos2.getBlockX()));
 
@@ -35,8 +38,7 @@ public class Mine {
 
                     assert world != null;
                     Block block = world.getBlockAt(x, y, z);
-                    if(block.getType() == this.block)
-
+                    if(block.getType() == this.block) continue;
                     block.setType(this.block);
                 }
             }

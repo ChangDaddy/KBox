@@ -12,10 +12,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.vfs.Vfs;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CommandHandler {
     @Getter @Setter private static Plugin plugin;

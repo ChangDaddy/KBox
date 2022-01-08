@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandNode {
     @Getter private static final List<CommandNode> nodes = new ArrayList<>();
@@ -144,7 +145,7 @@ public class CommandNode {
             for(String arg : args)
                 actualLabel.append(" ").append(arg);
 
-            if(name.equalsIgnoreCase(actualLabel.toString().trim().toLowerCase())) {
+            if(actualLabel.toString().startsWith(name)) {
                 containsName = true;
                 break;
             }

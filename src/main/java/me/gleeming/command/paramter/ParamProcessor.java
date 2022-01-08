@@ -6,6 +6,7 @@ import me.gleeming.command.duration.Duration;
 import me.gleeming.command.node.ArgumentNode;
 import me.gleeming.command.paramter.impl.*;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -50,5 +51,6 @@ public class ParamProcessor {
         processors.put(Boolean.class, new BooleanProcessor());
         processors.put(Duration.class, new DurationProcessor());
         processors.put(GameMode.class, new GamemodeProcessor());
+        processors.put(Material.class, new MaterialProcessor());
     }
 }
