@@ -2,7 +2,8 @@ name: BoxPvP
 description: Core for the box pvp server
 author: FinalBoolean
 version: 1.0
-api-version: 13
 softdepend:
-  - HolographicDisplays
+  - LuckPerms
+  - WorldGuard
+api-version: 1.13
 main: com.kitx.box.Box

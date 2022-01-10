@@ -12,7 +12,7 @@ public class Config {
     public static int broadcasts;
     public static long BROADCAST_DELAY;
     public static long CHAT_CD;
-    public static Location SPAWN_LOCATION;
+    public static Location SPAWN_LOCATION, AFK_LOCATION;
 
     public void loadConfig() {
         FileConfiguration config = Box.getInstance().getConfig();
@@ -22,6 +22,7 @@ public class Config {
         BROADCAST_DELAY = config.getLong("broadcast-delay");
         CHAT_CD = config.getLong("chat-delay");
         SPAWN_LOCATION = LocationUtil.parseToLocation(config.getString("spawn"));
+        AFK_LOCATION = LocationUtil.parseToLocation(config.getString("afkspawn"));
         for (String key : config.getConfigurationSection("announcements").getKeys(false)) {
             broadcasts++;
         }

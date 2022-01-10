@@ -34,7 +34,7 @@ public class ClearMapTask extends Task {
             for(Mine mine : Box.getInstance().getMineContainer().getMines()) {
                 mine.getReset().countDown();
 
-                if(mine.getReset().getSeconds() == 10) {
+                if(mine.getReset().getSeconds() == 10 && mine.isBroadcast()) {
                     Bukkit.broadcastMessage(ColorUtil.getHex("&7[<#0064fb>&lM<#135dfc>&li<#2656fc>&ln<#384ffd>&le<#4b48fd>&ls&7] &fMine &b" + mine.getName() + " &fwill be resetting in &b10s"));
                 }
 

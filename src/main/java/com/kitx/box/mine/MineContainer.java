@@ -2,12 +2,16 @@ package com.kitx.box.mine;
 
 
 import com.kitx.box.Box;
+import com.kitx.box.stats.PlayerData;
 import com.kitx.box.utils.CountDown;
 import com.kitx.box.utils.LocationUtil;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.io.BukkitObjectInputStream;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,17 +32,47 @@ public class MineContainer {
 
             YamlConfiguration load = YamlConfiguration.loadConfiguration(file);
             for(String mine : load.getKeys(false)) {
-                final String name = load.getString(mine + ".name");
-                final Location pos1 = LocationUtil.parseToLocation(load.getString(mine + ".pos1"));
-                final Location pos2 = LocationUtil.parseToLocation(load.getString(mine + ".pos2"));
-                final Material block = Material.valueOf(load.getString(mine + ".block"));
-                final int delay = load.getInt(mine + ".delay");
-                mines.add(new Mine(name, pos1, pos2, block, new CountDown(delay)));
+                mines.add(Mine.deserialize(load.getString(mine)));
+                System.out.println(mine);
             }
+
         }
         catch(Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void create(final String name, final int delay, boolean broadcast, PlayerData data) {
+        final Location pos1 = data.getPos1();
+        final Location pos2 = data.getPos2();
+        
+        final int topBlockX = (Math.max(pos1.getBlockX(), pos2.getBlockX()));
+        final int bottomBlockX = (Math.min(pos1.getBlockX(), pos2.getBlockX()));
+
+        final int topBlockY = (Math.max(pos1.getBlockY(), pos2.getBlockY()));
+        final int bottomBlockY = (Math.min(pos1.getBlockY(), pos2.getBlockY()));
+
+        final int topBlockZ = (Math.max(pos1.getBlockZ(), pos2.getBlockZ()));
+        final int bottomBlockZ = (Math.min(pos1.getBlockZ(), pos2.getBlockZ()));
+
+        final World world = pos1.getWorld();
+
+        final List<MappedBlock> mappedBlocks = new ArrayList<>();
+
+        for (int x = bottomBlockX; x <= topBlockX; x++) {
+
+            for (int z = bottomBlockZ; z <= topBlockZ; z++) {
+
+                for (int y = bottomBlockY; y <= topBlockY; y++) {
+
+                    assert world != null;
+                    Block block = world.getBlockAt(x, y, z);
+                    mappedBlocks.add(new MappedBlock(new SerializedLocation(block.getLocation().getWorld().getName(), block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ()), block.getType().name()));
+                }
+            }
+        }
+
+        mines.add(new Mine(name, mappedBlocks, new CountDown(delay), broadcast));
     }
 
     public void saveMines() {
@@ -48,11 +82,7 @@ public class MineContainer {
 
             YamlConfiguration load = YamlConfiguration.loadConfiguration(file);
             for(Mine mine : mines) {
-                load.set(mine.getName() + ".name", mine.getName());
-                load.set(mine.getName() + ".pos1", LocationUtil.parseToString(mine.getPos1()));
-                load.set(mine.getName() + ".pos2", LocationUtil.parseToString(mine.getPos2()));
-                load.set(mine.getName() + ".block", mine.getBlock().name());
-                load.set(mine.getName() + ".delay", mine.getReset().getMaxSeconds());
+                load.set(mine.getName(), mine.serialize());
             }
 
             load.save(file);

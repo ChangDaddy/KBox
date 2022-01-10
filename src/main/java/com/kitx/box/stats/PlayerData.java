@@ -1,6 +1,8 @@
 package com.kitx.box.stats;
 
 import com.kitx.box.Box;
+import com.kitx.box.config.Config;
+import com.kitx.box.utils.ColorUtil;
 import com.kitx.box.utils.Cooldown;
 import com.kitx.box.utils.CountDown;
 import com.kitx.box.utils.MathUtil;
@@ -14,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +31,10 @@ public class PlayerData {
 
     private final FastBoard board; // Scoreboard for the stats
 
-    private final CountDown combatTag = new CountDown(30);
+    private final CountDown combatTag = new CountDown(10, true);
+    private final CountDown newbieProtection = new CountDown(600, true);
+    private final CountDown afkZone = new CountDown(900);
+    private final Cooldown basicKitCD = new Cooldown();
     private final Cooldown cooldown = new Cooldown();
     private int kills, deaths, coins, killStreak;
     private Location pos1, pos2;
@@ -45,6 +52,7 @@ public class PlayerData {
         User user = api.getPlayerAdapter(Player.class).getUser(player);
         this.prefix = user.getCachedData().getMetaData().getPrefix();
         this.rank = user.getPrimaryGroup();
+        registerNameTag();
     }
 
     public void loadData() {
@@ -56,6 +64,7 @@ public class PlayerData {
             try {
                 //noinspection ResultOfMethodCallIgnored
                 player.createNewFile();
+                getPlayer().teleport(Config.SPAWN_LOCATION);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -69,7 +78,7 @@ public class PlayerData {
         }
     }
 
-    public void saveData() {
+    public PlayerData saveData() {
         final File dir = new File(Box.getInstance().getDataFolder(), "data");
 
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
@@ -98,6 +107,7 @@ public class PlayerData {
                 e.printStackTrace();
             }
         }
+        return this;
     }
 
     public void updateScoreboard() {
@@ -111,18 +121,18 @@ public class PlayerData {
         }
 
         board.updateTitle("<#ffff55>&lK<#f7e64d>&li<#eecc44>&lt<#e6b33c>&lX <#dd9933>&l│ <#d5802b>&lB<#cc6622>&lo<#c44d1a>&lx <#bb3311>&lP<#b31a09>&lV<#aa0000>&lP");
-        board.updateLine(0, "&8&m                 ");
+        board.updateLine(0, "&8&m                                     ");
         board.updateLine(1, "<#326BA0>┌&l" + player.getName() + " &7(" + Math.round(player.getHealth() / 2) + "&c❤&7)");
         board.updateLine(2, "<#326BA0>│ Rank: " + prefix);
         board.updateLine(3, "<#326BA0>│ Kills: &f" + kills);
-        board.updateLine(3, "<#326BA0>│ Deaths: &f" + deaths);
-        board.updateLine(4, "<#326BA0>│ KDR: &f" + kdr);
-        board.updateLine(5, "");
-        board.updateLine(6, "<#326BA0>┌&lSERVER");
-        board.updateLine(7, "<#326BA0>│ TPS: &f" + 20);
-        board.updateLine(8, "<#326BA0>│ Map Reset: &f" + Box.getInstance().getNextReset().convertTime());
-        board.updateLine(9, "<#326BA0>│ IP: &fkitx.minehut.gg");
-        board.updateLine(10, "&8&m                 ");
+        board.updateLine(4, "<#326BA0>│ Deaths: &f" + deaths);
+        board.updateLine(5, "<#326BA0>│ KDR: &f" + kdr);
+        board.updateLine(6, "");
+        board.updateLine(7, "<#326BA0>┌&lSERVER");
+        board.updateLine(8, "<#326BA0>│ TPS: &f" + 20);
+        board.updateLine(9, "<#326BA0>│ Map Reset: &f" + Box.getInstance().getNextReset().convertTime());
+        board.updateLine(10, "<#326BA0>│ IP: &fkitx.minehut.gg");
+        board.updateLine(11, "&8&m                                     ");
     }
 
     public void vanish() {
@@ -137,4 +147,29 @@ public class PlayerData {
             }
         }
     }
+
+
+    public void setPrefix(String prefix) {
+        Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+        sb.getTeam(player.getName()).setPrefix(prefix);
+    }
+
+    public void unregisterNameTag() {
+        Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+        sb.getTeam(player.getName()).unregister();
+    }
+
+    public void registerNameTag() {
+        try {
+            Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+            Team team = sb.registerNewTeam(player.getName());
+
+
+            team.setPrefix(ColorUtil.getHex(prefix));
+            team.addPlayer(player);
+        } catch (Exception e) {
+            //Ignored
+        }
+    }
+
 }

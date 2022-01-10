@@ -24,7 +24,9 @@ public class DataContainer {
     }
 
     public void removePlayer(Player player) {
-        statPlayerMap.get(player.getUniqueId()).saveData();
+        statPlayerMap.get(player.getUniqueId())
+                .saveData()
+                .unregisterNameTag();
         statPlayerMap.remove(player.getUniqueId());
     }
 

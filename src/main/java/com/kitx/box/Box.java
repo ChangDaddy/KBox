@@ -4,12 +4,14 @@ import com.kitx.box.config.Config;
 import com.kitx.box.events.PlayerListener;
 import com.kitx.box.mine.MineContainer;
 import com.kitx.box.stats.DataContainer;
+import com.kitx.box.tag.TagContainer;
 import com.kitx.box.task.TaskBuilder;
 import com.kitx.box.utils.CountDown;
 import com.samjakob.spigui.SpiGUI;
 import lombok.Getter;
 import me.gleeming.command.CommandHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,6 +25,7 @@ public class Box extends JavaPlugin {
     private SpiGUI spiGUI;
     private DataContainer statContainer;
     private MineContainer mineContainer;
+    private TagContainer tagContainer;
     private final CountDown nextReset = new CountDown(1800);
     private final List<Block> blockPlaceLocations = new ArrayList<>();
 
@@ -39,17 +42,11 @@ public class Box extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
-            getLogger().severe("*** This plugin will be disabled. ***");
-            this.setEnabled(false);
-            return;
-        }
-
         new Config().loadConfig();
         statContainer = new DataContainer();
         spiGUI = new SpiGUI(this);
         mineContainer = new MineContainer();
+        tagContainer = new TagContainer();
         new TaskBuilder();
         handleBukkit();
         statContainer.load();
@@ -60,6 +57,8 @@ public class Box extends JavaPlugin {
     public void onDisable() {
         mineContainer.saveMines();
         statContainer.save();
+        tagContainer.saveTags();
+        Box.getInstance().getBlockPlaceLocations().forEach(block -> block.setType(Material.AIR));
         super.onDisable();
     }
 
@@ -70,9 +69,6 @@ public class Box extends JavaPlugin {
     private void handleBukkit() {
         CommandHandler.registerCommands("com.kitx.box.commands", this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-    }
-
-    private void holographicDisplay() {
-
+        getServer().getPluginManager().registerEvents(tagContainer, this);
     }
 }

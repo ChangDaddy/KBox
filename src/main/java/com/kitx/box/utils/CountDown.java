@@ -3,11 +3,19 @@ package com.kitx.box.utils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class CountDown {
+public class CountDown implements Serializable {
     private int seconds;
     private int maxSeconds;
+    public CountDown(int seconds, boolean reset) {
+        this.seconds = seconds;
+        this.maxSeconds = seconds;
+        if(reset) this.seconds = 0;
+    }
+
     public CountDown(int seconds) {
         this.seconds = seconds;
         this.maxSeconds = seconds;
