@@ -11,6 +11,7 @@ import com.samjakob.spigui.buttons.SGButton;
 import com.samjakob.spigui.item.ItemBuilder;
 import me.gleeming.command.Command;
 import me.gleeming.command.paramter.Param;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -81,6 +82,7 @@ public class MainCommands {
             if (reward) {
                 player.sendMessage(ChatColor.GREEN + "You received your daily reward!");
                 statPlayer.setLastDailyReward(System.currentTimeMillis());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "crate givekey " + player.getName() + " iron");
                 player.closeInventory();
             } else {
                 player.sendMessage(ChatColor.RED + "You must wait " + hoursLeft + " hours to get a new reward!");

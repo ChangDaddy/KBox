@@ -13,6 +13,7 @@ import me.gleeming.command.CommandHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -26,8 +27,9 @@ public class Box extends JavaPlugin {
     private DataContainer statContainer;
     private MineContainer mineContainer;
     private TagContainer tagContainer;
-    private final CountDown nextReset = new CountDown(1800);
+    private final CountDown nextReset = new CountDown(172800);
     private final List<Block> blockPlaceLocations = new ArrayList<>();
+    private final List<Player> combatLogger = new ArrayList<>();
 
     @Override
     public void onLoad() {
@@ -42,6 +44,7 @@ public class Box extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
         new Config().loadConfig();
         statContainer = new DataContainer();
         spiGUI = new SpiGUI(this);

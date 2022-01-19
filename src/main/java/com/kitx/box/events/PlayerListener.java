@@ -9,7 +9,10 @@ import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,6 +23,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+
+import java.util.Objects;
 
 public class PlayerListener implements Listener {
 
@@ -55,6 +60,8 @@ public class PlayerListener implements Listener {
 
             PlayerData playerData =  Box.getInstance().getStatContainer().get(player);
             PlayerData damagerData = Box.getInstance().getStatContainer().get(damager);
+            playerData.getCombatTag().resetTime();
+            damagerData.getCombatTag().resetTime();
 
             if(!playerData.getNewbieProtection().isFinished() || !damagerData.getNewbieProtection().isFinished())  {
                 event.setCancelled(true);
@@ -62,6 +69,38 @@ public class PlayerListener implements Listener {
                 damagerData.getPlayer().sendMessage(!damagerData.getNewbieProtection().isFinished() ?
                         "\247cYou cannot attack that person! You have newbie protection."
                         : "\247cThat person cannot be attacked because of newbie protection.");
+            }
+        } else if(event.getEntity() instanceof Player && event.getDamager() instanceof Projectile) {
+            Player player = (Player) event.getEntity();
+            if(((Projectile) event.getDamager()).getShooter() instanceof Player) {
+                Player damager = ((Player) Objects.requireNonNull(((Projectile) event.getDamager()).getShooter())).getPlayer();
+
+                PlayerData playerData =  Box.getInstance().getStatContainer().get(player);
+                assert damager != null;
+                PlayerData damagerData = Box.getInstance().getStatContainer().get(damager);
+                playerData.getCombatTag().resetTime();
+                damagerData.getCombatTag().resetTime();
+
+                if(!playerData.getNewbieProtection().isFinished() || !damagerData.getNewbieProtection().isFinished())  {
+                    event.setCancelled(true);
+
+                    damagerData.getPlayer().sendMessage(!damagerData.getNewbieProtection().isFinished() ?
+                            "\247cYou cannot attack that person! You have newbie protection."
+                            : "\247cThat person cannot be attacked because of newbie protection.");
+                }
+            }
+        }
+    }
+
+
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent event) {
+        final PlayerData player = Box.getInstance().getStatContainer().get(event.getPlayer());
+
+        String[] args = event.getMessage().split(" ");
+        if(!player.getCombatTag().isFinished()) {
+            if(args[0].contains("/spawn") || args[0].contains("/l")) {
+                event.setCancelled(true);
             }
         }
     }
@@ -100,6 +139,10 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+        PlayerData data = Box.getInstance().getStatContainer().get(event.getPlayer());
+        if(!data.getCombatTag().isFinished()) {
+
+        }
         Box.getInstance().getStatContainer().removePlayer(player);
         event.setQuitMessage(ColorUtil.getHex("&8(&c-&8) &7" + player.getName()));
     }
