@@ -20,7 +20,6 @@ import java.util.List;
 public class MineContainer {
     private final Box plugin = Box.getInstance();
     @Getter private final List<Mine> mines = new ArrayList<>();
-
     public MineContainer() {
         loadMines();
     }

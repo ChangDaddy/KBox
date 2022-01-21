@@ -80,6 +80,10 @@ public class MainCommands {
                         .build()
          ).withListener(event -> {
             if (reward) {
+                if(!statPlayer.getCombatTag().isFinished()) {
+                    player.sendMessage(ChatColor.RED + "You cannot trigger noob protection in combat!");
+                    return;
+                }
                 player.sendMessage(ChatColor.GREEN + "You received your daily reward!");
                 statPlayer.setLastDailyReward(System.currentTimeMillis());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "crate givekey " + player.getName() + " iron");

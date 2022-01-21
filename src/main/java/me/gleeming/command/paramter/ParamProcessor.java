@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -52,5 +53,6 @@ public class ParamProcessor {
         processors.put(Duration.class, new DurationProcessor());
         processors.put(GameMode.class, new GamemodeProcessor());
         processors.put(Material.class, new MaterialProcessor());
+        processors.put(Enchantment.class, new EnchantProcessor());
     }
 }

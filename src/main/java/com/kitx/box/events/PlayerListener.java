@@ -141,7 +141,7 @@ public class PlayerListener implements Listener {
         final Player player = event.getPlayer();
         PlayerData data = Box.getInstance().getStatContainer().get(event.getPlayer());
         if(!data.getCombatTag().isFinished()) {
-
+            data.getPlayer().setHealth(0);
         }
         Box.getInstance().getStatContainer().removePlayer(player);
         event.setQuitMessage(ColorUtil.getHex("&8(&c-&8) &7" + player.getName()));
