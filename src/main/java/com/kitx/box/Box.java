@@ -27,9 +27,8 @@ public class Box extends JavaPlugin {
     private DataContainer statContainer;
     private MineContainer mineContainer;
     private TagContainer tagContainer;
-    private final CountDown nextReset = new CountDown(172800);
+    private final CountDown nextReset = new CountDown(10800);
     private final List<Block> blockPlaceLocations = new ArrayList<>();
-    private final List<Player> combatLogger = new ArrayList<>();
 
     @Override
     public void onLoad() {
